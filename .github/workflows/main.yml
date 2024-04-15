@@ -20,15 +20,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-                - name: Start container
-                run: docker run -d --rm --name issuer-api waltid/issuer-api
-                  - name: Wait for container
-                    uses: ayoubagrebi/Docker-container-test-automation@v1
-                    with:
-                      container: issuer-api
-                      wait-time: 50
-                      require-status: running
-                      require-healthy: true
-
-
-
+      - name: Start container
+        run: docker run -d --rm --name issuer-api waltid/issuer-api
+      - name: Wait for container
+        uses: ayoubagrebi/Docker-container-test-automation@v1
+        with:
+          container: issuer-api
+          wait-time: 50
+          require-status: running
+          require-healthy: true
