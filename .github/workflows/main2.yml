@@ -10,6 +10,8 @@ jobs:
     name: "Pre-release"
     runs-on: ubuntu-latest 
     steps:
+      - name: Pull image
+        run: docker pull waltid/issuer-api:latest
       - name: Start container
         run: docker run -d --rm --name issuer-api waltid/issuer-api
       - name: Wait for container
