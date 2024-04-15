@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest 
     steps:
       - name: Start container
-        run: docker run -d --rm --name hello-world crccheck/hello-world
+        run: docker run -d --rm --name issuer-api waltid/issuer-api
       - name: Wait for container
         uses: stringbean/docker-healthcheck-action@v1
         with:
-          container: hello-world
+          container: issuer-api
           wait-time: 50
           require-status: running
           require-healthy: true
