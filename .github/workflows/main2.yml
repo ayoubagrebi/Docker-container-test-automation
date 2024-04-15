@@ -16,6 +16,6 @@ jobs:
         uses: stringbean/docker-healthcheck-action@v1
         with:
           container: issuer-api
-          wait-time: 120
+          wait-time: 300
           require-status: running
           require-healthy: true
