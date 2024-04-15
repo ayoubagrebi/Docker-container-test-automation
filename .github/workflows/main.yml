@@ -23,7 +23,7 @@ jobs:
       - name: Start container
         run: docker run -d --rm --name issuer-api waltid/issuer-api
       - name: Wait for container
-        uses: ayoubagrebi/Docker-container-test-automation@v1
+        uses: docker/build-push-action@v5
         with:
           container: issuer-api
           wait-time: 50
