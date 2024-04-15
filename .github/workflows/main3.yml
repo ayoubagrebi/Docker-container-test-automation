@@ -15,7 +15,7 @@ jobs:
       - name: Test issuer-api container
         uses: waltid/waltid-identity@main
         with:
-          compose-file: "./docker/docker-compose.yml"
+          compose-file: "./docker-compose/docker-compose.yml"
           test-container: "issuer-api"
           test-command: "npm test"
 
