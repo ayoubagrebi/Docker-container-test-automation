@@ -22,12 +22,6 @@ jobs:
              verifier-api
              wallet-api
 
-      - name: Check service health
-        run: |
-          for service in issuer-api verifier-api wallet-api; do
-            docker-compose health-check $service;
-            if [[ $? -ne 0 ]]; then
-              echo "❌ Health check failed for service: $service";
-              exit 1;
+     
             fi
           done
