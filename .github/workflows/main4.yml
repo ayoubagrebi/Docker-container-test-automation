@@ -6,22 +6,14 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest  
 
     steps:
+   
       - uses: actions/checkout@v3
-
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
+      - uses: hoverkraft-tech/compose-action@v1.5.1
         with:
-          node-version: 16
-
-      - name: Install dependencies 
-        run: |
-          
-          npm install
-
-      - name: Run Docker Compose tests
-        uses: hoverkraft-tech/compose-action@v1.5.1
-        with:
-          compose-file: "docker-compose/docker-compose.yaml" 
+          compose-file: "./docker/docker-compose.yml"
+          services: |
+            helloworld2
+            helloworld3
