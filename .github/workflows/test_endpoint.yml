@@ -30,17 +30,17 @@ jobs:
       - name: Check running containers
         run: docker ps
     
-      - name: Test endpoint 7001
-        run: curl http://localhost:7001
-        id: test_7001
-
       - name: Test endpoint 7002
-        run: curl -s http://localhost:7002
+        run: curl http://localhost:7002
         id: test_7002
 
       - name: Test endpoint 7003
-        run: curl -s http://localhost:7003
+        run: curl http://localhost:7003
         id: test_7003
+
+      - name: Test endpoint 7101
+        run: curl http://localhost:7101
+        id: test_7101
 
       - name: Check endpoint results
         run: |
