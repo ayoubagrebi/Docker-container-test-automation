@@ -26,7 +26,10 @@ jobs:
 
       - name: Wait for services to boot
         run: sleep 120s  
-
+      
+      - name: Check running containers
+        run: docker ps
+    
       - name: Test endpoint 7001
         run: curl http://localhost:7002
         id: test_7001
