@@ -1,0 +1,48 @@
+name: Docker compose for CI/CD
+
+on:
+  push:
+    branches: [ main ]  
+  workflow_dispatch:  
+  schedule:           # Run daily at midnight (0 0 * * *)
+    - cron: '0 0 * * *'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Start Docker containers
+        uses: hoverkraft-tech/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose/docker-compose.yaml"
+          services: |
+            issuer-api
+            verifier-api
+            wallet-api
+
+      - name: Wait for services to boot
+        run: sleep 60s  
+
+      - name: Test endpoint 7001
+        run: curl -s -o /dev/null -w "%{http_code}" http://localhost:7001
+        id: test_7001
+
+      - name: Test endpoint 7002
+        run: curl -s -o /dev/null -w "%{http_code}" http://localhost:7002
+        id: test_7002
+
+      - name: Test endpoint 7003
+        run: curl -s -o /dev/null -w "%{http_code}" http://localhost:7003
+        id: test_7003
+
+      - name: Check endpoint results
+        run: |
+          echo "Endpoint 7001 status: ${{ steps.test_7001.outputs.stdout }}"
+          echo "Endpoint 7002 status: ${{ steps.test_7002.outputs.stdout }}"
+          echo "Endpoint 7003 status: ${{ steps.test_7003.outputs.stdout }}"
+
+    
