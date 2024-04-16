@@ -28,7 +28,7 @@ jobs:
         run: sleep 120s  
       
       - name: Check running containers
-        run: docker ps
+        run: docker ps -a
     
       - name: Test endpoint 7002
         run: curl http://localhost:7002
