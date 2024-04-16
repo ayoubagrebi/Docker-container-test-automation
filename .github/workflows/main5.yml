@@ -1,0 +1,33 @@
+name: Run Docker Compose Tests
+
+on:
+  push:
+    branches: [ main ]  
+  workflow_dispatch:  
+  schedule:           # Run daily at midnight (0 0 * * *)
+    - cron: '0 0 * * *'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hoverkraft-tech/compose-action@v1.5.1
+        with:
+          compose-file: "./docker-compose/docker-compose.yaml"
+          services: |  
+             issuer-api
+             verifier-api
+             wallet-api
+
+      - name: Check service health
+        run: |
+          for service in issuer-api verifier-api wallet-api; do
+            docker-compose health-check $service;
+            if [[ $? -ne 0 ]]; then
+              echo "❌ Health check failed for service: $service";
+              exit 1;
+            fi
+          done
