@@ -1,0 +1,31 @@
+name: test Docker Compose logs
+
+on:
+  push:
+    branches: [ main ]  
+  workflow_dispatch:  
+  schedule:           # Run daily at midnight 
+    - cron: '0 0 * * *'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: setup and start docker container 
+      - uses: hoverkraft-tech/compose-action@v0.0.0
+        with:
+         compose-file: "/docker-compose/docker-compose.yaml"
+         services: 
+          issuer-api
+          verifier-api
+          wallet-api
+          waltid-web-wallet
+          web-portal
+          vc-repo
+          db
+          phpmyadmin
+          caddy
+ 
