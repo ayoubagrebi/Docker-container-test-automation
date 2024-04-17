@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest 
     steps:
       - name: Pull image
-        run: docker pull waltid/issuer-api:latest
+        run: docker compose pull 
       - name: Start container
-        run: docker run -d --rm --name issuer-api waltid/issuer-api
+        run: docker compose up issuer-api
       - name: Wait for container
         uses: stringbean/docker-healthcheck-action@v1
         with:
