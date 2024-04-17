@@ -17,7 +17,7 @@ jobs:
       - name: setup and start docker container 
       - uses: hoverkraft-tech/compose-action@v0.0.0
         with:
-         compose-file: "/docker-compose/docker-compose.yaml"
+         compose-file: "./docker-compose/docker-compose.yaml"
          services: 
           issuer-api
           verifier-api
