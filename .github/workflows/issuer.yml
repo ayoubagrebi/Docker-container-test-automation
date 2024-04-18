@@ -1,4 +1,4 @@
-name: issuer-api test
+name: issuer-api
 on: push
 
 jobs:
@@ -11,9 +11,20 @@ jobs:
           - 7002
     steps:
       - name: Wait for service to start
-        run: sleep 10s
+        run: sleep 10s  
+
+      - name: Verify issuer-api health
+        run: |
+          health_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:7002/health)
+          if [ $health_status -eq 200 ]; then
+            echo "issuer-api is healthy"
+          else
+            echo "issuer-api is not healthy"
+            exit 1
+          fi
+
       - name: Verify issuer-api connection from host
         run: |
           echo "${{ toJson(job) }}"
-          curl -s http://localhost:7002/health || exit 1
+          curl -s http://localhost:7002
           docker logs "${{ job.services.issuer-api.id }}"
