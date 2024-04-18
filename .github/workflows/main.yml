@@ -1,4 +1,4 @@
-name: test Docker Compose deployment 
+name: test Docker Compose deployment
 
 on:
   push:
@@ -22,15 +22,22 @@ jobs:
 
       - name: Start Docker containers
         run: docker-compose -f ./docker-compose/docker-compose.yaml up  &
-
-      
         working-directory: ${{ github.workspace }}
-    
-      - name: Tail container logs
-        run:  docker logs "${{ job.services.issuer-api.id }}"
-       
-     
-    
+
+      - uses: actions/checkout@v4
+          
+      - name: Build with logs
+        run: |
+          mkdir ${{ runner.temp }}/build_logs
+          echo "Logs from building" > ${{ runner.temp }}/build_logs/build.logs
+          exit 1
+
+      - name: Upload logs on fail
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build failure logs
+          path: ${{ runner.temp }}/build_logs
 
       - name: Wait for services to boot
         run: sleep 120s  
