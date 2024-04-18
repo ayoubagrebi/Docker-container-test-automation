@@ -21,8 +21,11 @@ jobs:
           version: '2.14.2' 
 
       - name: Start Docker containers
-        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d --no-TTY
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d 
+      
         working-directory: ${{ github.workspace }}
+      - name: Tail container logs
+        run: docker-compose logs -f
 
       - name: Wait for services to boot
         run: sleep 120s  
