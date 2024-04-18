@@ -29,8 +29,7 @@ jobs:
       - name: Print working directory
         run: pwd
      
-      - name: Tail container logs
-        run: docker-compose logs -f
+    
 
       - name: Wait for services to boot
         run: sleep 120s  
