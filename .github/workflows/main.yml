@@ -23,7 +23,11 @@ jobs:
       - name: Start Docker containers
         run: docker-compose -f ./docker-compose/docker-compose.yaml up -d 
       
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/./docker-compose/docker-compose.yaml
+    
+      - name: Print working directory
+        run: pwd
+     
       - name: Tail container logs
         run: docker-compose logs -f
 
