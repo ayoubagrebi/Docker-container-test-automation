@@ -1,4 +1,4 @@
-name: issuer-api
+name: issuer-api test
 on: push
 
 jobs:
