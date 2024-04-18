@@ -26,11 +26,7 @@ jobs:
 
       - uses: actions/checkout@v4
           
-      - name: Build with logs
-        run: |
-          mkdir ${{ runner.temp }}/build_logs
-          echo "Logs from building" > ${{ runner.temp }}/build_logs/build.logs
-          exit 1
+     
 
       - name: Upload logs on fail
         if: ${{ failure() }}
