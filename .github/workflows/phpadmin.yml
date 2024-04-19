@@ -9,7 +9,7 @@ jobs:
         image: dpage/pgadmin4
         env:
           PGADMIN_DEFAULT_EMAIL: admin@admin.com
-          PGADMIN_DEFAULT_PASSWORD: admin
+          PGADMIN_DEFAULT_PASSWORD: root
         volumes:
           - pgadmin:/waltid-wallet-api/data/pgadmin
         ports:
@@ -17,10 +17,10 @@ jobs:
     steps:
       - name: Verify phpmyadmin connection from host
         run: |
-          echo "${{ toJson(job) }}"
-          # You can add your commands here to interact with the phpmyadmin service
-          # For example:
-          # - Check if the service is running
-          # - Perform any required setup or testing
-          # - Run tests or execute scripts
-          # - Access the phpmyadmin interface
+          echo "Checking if phpmyadmin service is running..."
+          if curl -sSf http://localhost:8081 >/dev/null; then
+            echo "phpmyadmin service is running."
+          else
+            echo "Error: phpmyadmin service is not running."
+            exit 1
+          fi
