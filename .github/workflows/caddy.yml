@@ -1,4 +1,4 @@
-name: postgres-test
+name: postgres-test  # Replace with a descriptive name if needed
 
 on:
   push:
@@ -11,12 +11,16 @@ jobs:
     services:
       db:
         image: postgres:alpine
-        # Removed 'restart' and 'env_file' keys as they're not directly supported
-        # env:  # Here's where you can define environment variables explicitly
-        #   POSTGRES_USER: postgres
-        #   POSTGRES_PASSWORD: my_password
-        env_file:  # Not directly supported within workflow service definition
-        #   - ./postgres.env  # Example for using an environment variable file (alternative approach)
+        # Health check logic can be implemented using environment variables or a separate script (refer to Docker documentation)
+        # healthcheck:  # Commented out as 'healthcheck' is not a standard key
+        #   test: ["CMD", "pg_isready", "-q", "-U", "postgres"]
+        #   interval: 5s
+        #   timeout: 1s
+        #   retries: 2
+        # Removed 'restart' key as it's not directly supported within workflow service definition
+        env:  # Define environment variables explicitly here (if needed)
+          POSTGRES_USER: postgres  # Replace with your actual username
+          POSTGRES_PASSWORD: my_password  # Replace with your actual password
         volumes:
           - wallet-api-db:/waltid-wallet-api/data/postgresql  # Adjust volume paths if needed
           - ./db-init.sh:/docker-entrypoint-initdb.d/db-init.sh  # Adjust script path if needed
