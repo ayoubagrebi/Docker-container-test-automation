@@ -20,6 +20,13 @@ jobs:
           echo "Checking if phpmyadmin service is running..."
           if curl -sSf http://localhost:8081 >/dev/null; then
             echo "phpmyadmin service is running."
+            
+            # Get the ID of the phpmyadmin service container
+            phpmyadmin_id="${{ job.services.phpmyadmin.id }}"
+            
+            echo "Displaying phpMyAdmin container logs..."
+            docker logs $phpmyadmin_id
+            
           else
             echo "Error: phpmyadmin service is not running."
             exit 1
