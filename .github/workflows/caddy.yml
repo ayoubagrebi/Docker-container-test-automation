@@ -30,14 +30,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Verify PostgreSQL connection from host
+      - name: Wait for PostgreSQL to be ready
         run: |
-          echo "Connecting to PostgreSQL..."
-          until psql -h 127.0.0.1 -p ${{ job.services.db.ports['5432'] }} -U postgres -f /dev/null; do
+          until psql -h 127.0.0.1 -p 5432 -U postgres -f /dev/null; do
             echo "Waiting for PostgreSQL service to be ready..."
             sleep 5
           done
           echo "PostgreSQL service is healthy."
+
+      - name: Verify PostgreSQL connection from host
+        run: |
+          echo "Connecting to PostgreSQL..."
+          psql -h 127.0.0.1 -p 5432 -U postgres -f /dev/null
 
       - name: Display PostgreSQL container logs
         run: |
@@ -49,3 +53,8 @@ jobs:
           # Replace with your specific test commands (e.g., pg_dump, custom scripts)
           echo "Running PostgreSQL tests..."
           # Your test commands go here
+
+      - name: Stop containers  # Optional step to stop and remove containers after tests
+        run: |
+          docker stop ${{ job.services.db.id }}
+          docker rm ${{ job.services.db.id }}
