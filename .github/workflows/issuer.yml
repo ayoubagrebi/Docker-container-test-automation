@@ -15,6 +15,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with: 
+         paths: "!issuer-api/config" 
 
       - name: Wait for issuer-api service to be ready
         run: |
