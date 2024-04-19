@@ -12,12 +12,14 @@ jobs:
       issuer-api:
         image: waltid/issuer-api:latest  # Specify image and tag
         volumes:
-          - ./issuer-api/config:/waltid-issuer-api/config:ro  # Mount config volume read-only
+          # Mount your issuer-api/config volume here (adjust paths)
+          - ./issuer-api/l/config:/waltid-issuer-api/config:ro
         ports:
           - 7002:7002  # Map container port to host port
 
     steps:
       - uses: actions/checkout@v3
+        
 
       - name: Verify issuer-api connection (using curl and monitor logs)
         run: |
@@ -29,7 +31,6 @@ jobs:
           echo "issuer-api service is healthy."
           wait  # Wait for logs process to finish
 
-      # Option 1: Display logs at the end (uncommented)
       - name: Display issuer-api container logs (Option 1)
         run: |
           docker logs issuer-api
@@ -39,3 +40,4 @@ jobs:
           # Replace with your specific test commands
           echo "Running issuer-api tests..."
           # Your test commands go here (e.g., pytest, unit tests, etc.)
+
