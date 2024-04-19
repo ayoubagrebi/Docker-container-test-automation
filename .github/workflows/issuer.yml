@@ -1,3 +1,4 @@
+
 name: issuer-api test
 on: push
 
@@ -7,24 +8,34 @@ jobs:
     services:
       issuer-api:
         image: waltid/issuer-api:latest
+        volumes:
+          - ./issuer-api/config:/waltid-issuer-api/config
         ports:
           - 7002
-    steps:
-      - name: Wait for service to start
-        run: sleep 10s  
 
-      - name: Verify issuer-api health
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Wait for issuer-api service to be ready
         run: |
-          health_status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:7002/health)
-          if [ $health_status -eq 200 ]; then
-            echo "issuer-api is healthy"
-          else
-            echo "issuer-api is not healthy"
-            exit 1
-          fi
+          echo "Waiting for issuer-api service to be ready"
+          status="starting"
+          while [ "$status" != "healthy" ]; do
+            status=$(curl -s http://localhost:7002/health/ || true)  # Attempt health check via curl
+            echo "issuer-api service is $status."
+            if [ "$status" != "healthy" ]; then
+              sleep 5
+            fi
+          done
 
       - name: Verify issuer-api connection from host
         run: |
-          echo "${{ toJson(job) }}"
-          curl -s http://localhost:7002
-          docker logs "${{ job.services.issuer-api.id }}"
+          echo "Waiting for issuer-api service to be ready"
+          status="starting"
+          while [ "$status" != "healthy" ]; do
+            status=$(/usr/bin/docker inspect --format="{{if .State.Health}}{{print .State.Health.Status}}{{end}}" "${{ job.services.issuer-api.id }}")
+            echo "issuer-api service is $status."
+            if [ "$status" != "healthy" ]; then
+              sleep 5
+            fi
+          done
