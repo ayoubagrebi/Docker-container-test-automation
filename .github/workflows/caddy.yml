@@ -1,0 +1,31 @@
+name: caddy
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      caddy:
+        image: caddy:2
+        cap_add:
+          - NET_ADMIN
+        ports:
+          - 7001
+          - 7002
+          - 7003
+          - 7004
+          - 7005
+          - 7006
+        options: --health-cmd="curl -f http://localhost:7001" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+    - name: Verify Caddy connection from host
+      run: |
+        echo "Waiting for Caddy service to be ready"
+        status="starting"
+        while [ "$status" != "healthy" ]; do
+          status=$(/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" "${{ job.services.caddy.id }}")
+          echo "Caddy service is $status."
+          if [ "$status" != "healthy" ]; then
+            sleep 5
+          fi
+        done
