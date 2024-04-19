@@ -1,0 +1,26 @@
+name: phpmyadmin
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      phpmyadmin:
+        image: dpage/pgadmin4
+        env:
+          PGADMIN_DEFAULT_EMAIL: admin@admin.com
+          PGADMIN_DEFAULT_PASSWORD: admin
+        volumes:
+          - pgadmin:/waltid-wallet-api/data/pgadmin
+        ports:
+          - 8081:80
+    steps:
+      - name: Verify phpmyadmin connection from host
+        run: |
+          echo "${{ toJson(job) }}"
+          # You can add your commands here to interact with the phpmyadmin service
+          # For example:
+          # - Check if the service is running
+          # - Perform any required setup or testing
+          # - Run tests or execute scripts
+          # - Access the phpmyadmin interface
