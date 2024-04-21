@@ -1,0 +1,17 @@
+name: ci
+# run all tests on the main branch
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test-http:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out code 🛎
+        uses: actions/checkout@v2
+
+      # run utility services in the background
+      # using docker-compose (see docker-compose.yml file)
+      - name: Run docker-compose
+        run: docker-compose up -d
