@@ -28,7 +28,7 @@ jobs:
         run: sleep 120s  
 
       - name: Test logs
-        run: docker-compose -f docker-compose/docker-compose.yaml logs waltid-web-wallet verifier-api issuer-api web-portal wallet-api phpmyadmin vc-repo caddy
+        run: docker-compose -f docker-compose/docker-compose.yaml logs waltid-web-wallet verifier-api issuer-api web-portal wallet-api phpmyadmin vc-repo caddy db
 
        
 
