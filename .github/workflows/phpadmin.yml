@@ -1,0 +1,33 @@
+name: phpmyadmin
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      phpmyadmin:
+        image: dpage/pgadmin4
+        env:
+          PGADMIN_DEFAULT_EMAIL: admin@admin.com
+          PGADMIN_DEFAULT_PASSWORD: root
+        volumes:
+          - pgadmin:/waltid-wallet-api/data/pgadmin
+        ports:
+          - 8081:80
+    steps:
+      - name: Verify phpmyadmin connection from host
+        run: |
+          echo "Checking if phpmyadmin service is running..."
+          if curl -sSf http://localhost:8081 >/dev/null; then
+            echo "phpmyadmin service is running."
+            
+            # Get the ID of the phpmyadmin service container
+            phpmyadmin_id="${{ job.services.phpmyadmin.id }}"
+            
+            echo "Displaying phpMyAdmin container logs..."
+            docker logs $phpmyadmin_id
+            
+          else
+            echo "Error: phpmyadmin service is not running."
+            exit 1
+          fi

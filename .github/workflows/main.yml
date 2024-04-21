@@ -1,31 +1,57 @@
-name: Docker Compose Test
+name: test Docker Compose deployment
 
 on:
-  workflow_dispatch:
-  schedule:
+  push:
+    branches: [ main ]  
+  workflow_dispatch:  
+  schedule:           # Run daily at midnight 
     - cron: '0 0 * * *'
 
-env:
-  WALLET_BACKEND_PORT: 7001
-  ISSUER_API_PORT: 7002
-  VERIFIER_API_PORT: 7003
-
 jobs:
-  docker-compose:
+  build-and-test:
     runs-on: ubuntu-latest
-    services:
-      docker:
-        image: docker:20.10.8
-        options: --privileged
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Start container
-        run: docker run -d --rm --name issuer-api waltid/issuer-api
-      - name: Wait for container
-        uses: docker/build-push-action@v5
+        uses: actions/checkout@v3
+
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
         with:
-          container: issuer-api
-          wait-time: 50
-          require-status: running
-          require-healthy: true
+          version: '2.14.2' 
+
+      - name: Start Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up  &
+        working-directory: ${{ github.workspace }}
+
+      - uses: actions/checkout@v4
+          
+     
+
+      - name: Upload logs on fail
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build failure logs
+          path: ${{ runner.temp }}/build_logs
+
+      - name: Wait for services to boot
+        run: sleep 120s  
+
+      - name: Test endpoint 7001
+        run: curl -s http://localhost:7001
+        id: test_7001
+
+      - name: Test endpoint 7002
+        run: curl -s http://localhost:7002
+        id: test_7002
+
+      - name: Test endpoint 7003
+        run: curl -s http://localhost:7003
+        id: test_7003
+
+      - name: Check endpoint results
+        run: |
+          echo "Endpoint 7001 status: ${{ steps.test_7001.outputs.stdout }}"
+          echo "Endpoint 7002 status: ${{ steps.test_7002.outputs.stdout }}"
+          echo "Endpoint 7003 status: ${{ steps.test_7003.outputs.stdout }}"
