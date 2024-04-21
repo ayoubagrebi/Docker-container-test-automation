@@ -27,7 +27,7 @@ jobs:
       - name: Wait for services to boot
         run: sleep 120s  
 
-      - name: Test logs
+      - name: View Docker Compose Logs
         run: docker-compose -f docker-compose/docker-compose.yaml logs waltid-web-wallet verifier-api issuer-api web-portal wallet-api phpmyadmin vc-repo caddy db
 
        
