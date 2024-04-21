@@ -16,3 +16,6 @@ jobs:
       - name: Run docker-compose
         run: docker-compose -f docker-compose/docker-compose.yaml up -d
 
+      - name: Logs
+        run: docker-compose logs wallet-api
+
