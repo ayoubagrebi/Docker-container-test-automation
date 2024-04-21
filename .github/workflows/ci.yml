@@ -1,21 +1,35 @@
-name: ci
-# run all tests on the main branch
+name: Docker compose for CI/CD test
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]  
+  workflow_dispatch:  
+  schedule:           # Run daily at midnight (0 0 * * *)
+    - cron: '0 0 * * *'
+
 jobs:
-  test-http:
-    runs-on: ubuntu-20.04
+  build-and-test:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Check out code 🛎
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      # run utility services in the background
-      # using docker-compose (see docker-compose.yml file)
-      - name: Run docker-compose
-        run: docker-compose -f docker-compose/docker-compose.yaml up -d --scale issuer-api=1
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.14.2' 
 
-      - name: Logs
-        run: docker-compose logs iissuer-api
+      - name: Start Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        working-directory: ${{ github.workspace }}
 
+      - name: Wait for services to boot
+        run: sleep 120s  
+
+      - name: Test logs
+        run: docker-compose -f docker-compose/docker-compose.yaml logs waltid-web-wallet verifier-api issuer-api web-portal wallet-api phpmyadmin vc-repo caddy
+
+       
+
+     
