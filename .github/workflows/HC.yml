@@ -32,6 +32,6 @@ jobs:
       - name: Check container health  # check health check
         uses: zethuman/healthcheck@v0.0.1  # Use the health check action
         with:
-          name: issuer-api  # Container to check
+          name: docker-compose-issuer-api-1  # Container to check
           timeout: 60  # Timeout for health check
           interval: 2  # In
