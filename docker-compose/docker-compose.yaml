@@ -20,6 +20,11 @@ services:
     image: waltid/issuer-api:latest
     volumes:
       - ./issuer-api/config:/waltid-issuer-api/config
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   verifier-api:
     platform: linux/x86_64
