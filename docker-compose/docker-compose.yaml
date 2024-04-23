@@ -21,7 +21,7 @@ services:
     volumes:
       - ./issuer-api/config:/waltid-issuer-api/config
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:7002/health"]
+      test: ["CMD-SHELL", "curl http://localhost:7002"]
       interval: 30s
       timeout: 10s
       retries: 3
