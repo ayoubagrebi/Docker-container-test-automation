@@ -10,28 +10,26 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v3
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  - name: Setup Docker Compose
+    uses: KengoTODA/actions-setup-docker-compose@v1
+    with:
+      version: '2.14.2' 
 
-      - name: Setup Docker Compose
-        uses: KengoTODA/actions-setup-docker-compose@v1
-        with:
-          version: '2.14.2' 
+  - name: Start Docker containers
+    run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+    working-directory: ${{ github.workspace }}
 
-      - name: Start Docker containers
-        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
-        working-directory: ${{ github.workspace }}
+  - name: Wait for services to boot
+    run: sleep 120s  
 
-      - name: Wait for services to boot
-        run: sleep 120s  
-
-      - name: View Docker Compose Logs
-        run: docker-compose -f docker-compose/docker-compose.yaml logs db caddy phpmyadmin verifier-api issuer-api wallet-api vc-repo waltid-web-wallet web-portal
-      - name: Get container status
-        uses: stringbean/docker-healthcheck-action@v1
-        id: missing-container
-        with:
-          container: issuer-api
-      - run: echo "Container is ${{ steps.missing-container.outputs.status  }}"   
+  - name: View Docker Compose Logs
+    run: docker-compose -f docker-compose/docker-compose.yaml logs db caddy phpmyadmin verifier-api issuer-api wallet-api vc-repo waltid-web-wallet web-portal
+    uses: zethuman/healthcheck@v0.0.1
+    with:
+      name: my-container
+      timeout: 180
+      interval: 2
