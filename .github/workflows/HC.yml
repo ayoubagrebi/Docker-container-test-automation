@@ -1,4 +1,4 @@
-name: Docker compose for CI/CD test
+name: Docker compose for HC
 
 on:
   push:
