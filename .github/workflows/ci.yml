@@ -31,7 +31,7 @@ jobs:
         run: docker ps -a
      
       - name: View Docker Compose Logs
-        run: docker-compose -f docker-compose/docker-compose.yaml logs caddy phpmyadmin verifier-api issuer-api wallet-api vc-repo waltid-web-wallet web-portal   
+        run: docker-compose -f docker-compose/docker-compose.yaml logs caddy verifier-api issuer-api wallet-api vc-repo waltid-web-wallet web-portal   
 
        
 
