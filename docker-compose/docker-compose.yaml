@@ -29,6 +29,11 @@ services:
     image: waltid/verifier-api:latest
     volumes:
       - ./verifier-api/config:/waltid-verifier-api/config
+     healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:7003"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   waltid-web-wallet:
     image: waltid/waltid-web-wallet:latest
