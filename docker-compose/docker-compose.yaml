@@ -18,12 +18,17 @@ services:
     image: waltid/issuer-api:latest
     volumes:
       - ./issuer-api/config:/waltid-issuer-api/config
+<<<<<<< HEAD
+=======
+    
+>>>>>>> cb729c8040b05238e5aa7d4c40b961498d652b76
 
   verifier-api:
     platform: linux/x86_64
     image: waltid/verifier-api:latest
     volumes:
       - ./verifier-api/config:/waltid-verifier-api/config
+    
 
   waltid-web-wallet:
     image: waltid/waltid-web-wallet:latest
