@@ -20,12 +20,23 @@ jobs:
         with:
           version: '2.14.2' 
 
+      - name: Pull Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml pull
+        
       - name: Start Docker containers
         run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
         working-directory: ${{ github.workspace }}
 
       - name: Wait for services to boot
         run: sleep 120s  
+
+      - name: Wait for container
+        uses: stringbean/docker-healthcheck-action@v1
+        with:
+          container: docker-compose-issuer-api-1
+          wait-time: 50
+          require-status: running
+          require-healthy: true
 
       - name: Check running containers
         run: docker ps -a
