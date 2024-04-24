@@ -15,10 +15,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Docker and Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io docker-compose
+      - name: Install Compose
+        uses: ndeloof/install-compose-action@v0.0.1
+        with:
+          version: v2.1.0 
+          legacy: true    
+      - run: docker-compose --version
       
       - name: Setup Docker Compose
         uses: KengoTODA/actions-setup-docker-compose@v1
