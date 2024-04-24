@@ -1,0 +1,31 @@
+name: test Docker Compose deployment 
+
+on:
+  push:
+    branches: [ main ]  
+  workflow_dispatch:  
+  schedule:           # Run daily at midnight 
+    - cron: '0 0 * * *'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.14.2' 
+
+      - name: Start Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        working-directory: ${{ github.workspace }}
+
+      - name: Wait for services to boot
+        run: sleep 120s  
+
+      - name: View Docker Compose Logs
+        run: docker-compose -f docker-compose/docker-compose.yaml logs db caddy phpmyadmin verifier-api issuer-api wallet-api vc-repo waltid-web-wallet web-portal   
