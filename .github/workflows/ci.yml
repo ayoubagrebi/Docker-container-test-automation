@@ -33,7 +33,7 @@ jobs:
       - name: Docker Health Check
         uses: stringbean/docker-healthcheck-action@v3.0.0
         with:
-          container: docker-compose-issuer-api-1
+          container: docker-compose-wallet-api-1
           wait-time: 50
           require-status: running
           require-healthy: true
