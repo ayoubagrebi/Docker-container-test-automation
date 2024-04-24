@@ -20,8 +20,7 @@ jobs:
         with:
           version: '2.14.2' 
 
-      - name: Pull Docker containers
-        run: docker-compose -f ./docker-compose/docker-compose.yaml pull
+    
         
       - name: Start Docker containers
         run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
