@@ -1,11 +1,11 @@
-name: test Docker Compose logs
+name: Docker Compose for CI/CD 
 
 on:
   push:
-    branches: [ main ]  
-  workflow_dispatch:  
-  schedule:           # Run daily at midnight 
-    - cron: '0 0 * * *'
+    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight (0 0 * * *)
 
 jobs:
   build-and-test:
@@ -13,19 +13,34 @@ jobs:
 
     steps:
       - name: Checkout code
-      - uses: actions/checkout@v3
-      - name: setup and start docker container 
-      - uses: hoverkraft-tech/compose-action@v0.0.0
+        uses: actions/checkout@v3
+
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
         with:
-         compose-file: "./docker-compose/docker-compose.yaml"
-         services: 
-          issuer-api
-          verifier-api
-          wallet-api
-          waltid-web-wallet
-          web-portal
-          vc-repo
-          db
-          phpmyadmin
-          caddy
- 
+          version: '2.14.2'
+
+      - name: Start Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        working-directory: ${{ github.workspace }}
+
+      - name: Wait for services to boot
+        run: sleep 120s
+
+      - name: View Docker Compose Logs
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs waltid-web-wallet verifier-api issuer-api web-portal wallet-api phpmyadmin vc-repo caddy db
+
+      - name: Check Docker Compose Logs for Errors
+        run: |
+          error_found=false
+          for service in waltid-web-wallet verifier-api issuer-api web-portal wallet-api phpmyadmin vc-repo caddy db; do
+            if [[ $(docker-compose -f docker-compose/docker-compose.yaml logs $service | grep -E "error|fatal") ]]; then
+              error_found=true
+              echo "** Error found in logs of service: $service"
+            fi
+          done
+
+          if [[ $error_found == true ]]; then
+            echo "** Errors found in Docker container logs. Failing the test."
+            exit 1  # This line will cause the test to fail
+          fi
