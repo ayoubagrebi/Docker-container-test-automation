@@ -43,6 +43,7 @@ jobs:
           require-status: running
           require-healthy: true  
 
+      - run: docker volume ls
       - name: Docker Health Check Issuer
         uses: stringbean/docker-healthcheck-action@v3.0.0
         with:
