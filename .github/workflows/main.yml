@@ -43,7 +43,8 @@ jobs:
           require-status: running
           require-healthy: true  
 
-      - run: docker volume ls
+      - run: docker inspect -f '{{ .Mounts }}' $(docker ps -aqf "name=docker-compose-wallet-api-1")
+
       - name: Docker Health Check Issuer
         uses: stringbean/docker-healthcheck-action@v3.0.0
         with:
