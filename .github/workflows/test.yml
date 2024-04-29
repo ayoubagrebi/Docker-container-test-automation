@@ -28,7 +28,7 @@ jobs:
       - name: Check running containers
         run: docker ps -a
       - name: View Docker Compose Logs
-        run: docker-compose logs -f  
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs -f
       
       - name: Docker Health Check Verifier
         uses: stringbean/docker-healthcheck-action@v3.0.0
