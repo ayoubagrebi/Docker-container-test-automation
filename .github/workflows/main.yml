@@ -32,7 +32,7 @@ jobs:
         run: docker ps -a
      
       - name: View Docker Compose Logs
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs -f
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs --no-buffer
       
       
 
