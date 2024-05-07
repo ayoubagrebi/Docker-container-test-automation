@@ -8,12 +8,15 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
-
+    
     steps:
-      
+      - name: Checkout code
+        uses: actions/checkout@v3
 
+
+       
       - run: docker-compose --version
       
       - name: Setup Docker Compose
@@ -24,7 +27,6 @@ jobs:
       - name: Start Docker containers
         run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
         working-directory: ${{ github.workspace }}
-
        
       - name: Check running containers
         run: docker ps -a
