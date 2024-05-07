@@ -25,9 +25,9 @@ jobs:
       - name: Check running containers
         run: docker ps -a
       - name: View Docker Compose Logs
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs 
-      - name: Wait for logs
-        run: sleep 60
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs && sleep 60
+
+                
 
       - name: Check Docker Compose Logs for Errors
         
