@@ -32,7 +32,8 @@ jobs:
         run: docker ps -a
      
       - name: View Docker Compose Logs
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs docker-compose-wallet-api-1 docker-compose-verifier-api-1 docker-compose-vc-repo-1
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs wallet-api verifier-api vc-repo
+
         
       
       
