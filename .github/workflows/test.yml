@@ -26,6 +26,14 @@ jobs:
         run: docker ps -a
       - name: View Docker Compose Logs
         run: docker-compose -f ./docker-compose/docker-compose.yaml logs 
+      - name: Wait for logs
+        run: sleep 60
+
+      - name: Check Docker Compose Logs for Errors
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs | grep -q 'error'
+        shell: bash
+        continue-on-error: false
+
       
   #    - name: Docker Health Check Verifier
    #     uses: stringbean/docker-healthcheck-action@v3.0.0
