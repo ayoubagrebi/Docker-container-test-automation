@@ -32,8 +32,8 @@ jobs:
         run: docker ps -a
      
       - name: View Docker Compose Logs
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs  
-        timeout-minutes: 1 
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs wallet-api issuer-api verifier-api waltid-web-wallet web-portal vc-repo caddy 
+        
       
       
 
