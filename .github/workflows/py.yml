@@ -29,41 +29,44 @@ jobs:
       - name: Check running containers
         run: docker ps -a
 
-     
-
       - name: Run Python script to generate status report
         run: |
           python - <<EOF
-          import subprocess
-          import re
-          import datetime
+            import subprocess
+            import re
+            import datetime
 
             # Run docker-compose up command and capture output
-          output = subprocess.check_output(["docker-compose", "-f", "./docker-compose/docker-compose.yaml", "ps"])
+            print("Running docker-compose ps command...")
+            output = subprocess.check_output(["docker-compose", "-f", "./docker-compose/docker-compose.yaml", "ps"])
+            print("Output of docker-compose ps command:")
+            print(output.decode())
 
+            # Get current date and time
+            now = datetime.datetime.now()
+            formatted_date = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-          # Get current date and time
-          now = datetime.datetime.now()
-          formatted_date = now.strftime("%Y-%m-%d_%H-%M-%S")
+            # Create report file with the current date and time in the filename
+            report_file = open(f"container_report_{formatted_date}.txt", "w")
 
-          # Create report file with the current date and time in the filename
-          report_file = open(f"container_report_{formatted_date}.txt", "w")
+            # Search output for container status
+            container_status = re.findall(r"(\w+)\s+(\w+)\s+(?:\d+)\s+(?:\d+/\d+/\d+\s+)?(?:\d+:\d+:\d+\s+)?(\w+)", output.decode())
+            print("Container status:")
+            print(container_status)
 
-          # Search output for container status
-          container_status = re.findall(r"(\w+)\s+(\w+)\s+(?:\d+)\s+(?:\d+/\d+/\d+\s+)?(?:\d+:\d+:\d+\s+)?(\w+)", output.decode())
+            # Check status of each container and write to report file
+            for container, _, status in container_status:
+                print(f"{container}: {status}")
+                report_file.write(f"{container}: {status}\n")
 
-          # Check status of each container and write to report file
-          for container, _, status in container_status:
-              report_file.write(f"{container}: {status}\n")
+            # Close report file
+            report_file.close()
 
-          # Close report file
-          report_file.close()
-          
-
+            print("Container status report generated successfully.")
           EOF
 
-      - name: Upload report as artifact 
+      - name: Upload report as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: container_status_report 
-          path: container_report_*.txt  
+          name: container_status_report
+          path: container_report_*.txt
