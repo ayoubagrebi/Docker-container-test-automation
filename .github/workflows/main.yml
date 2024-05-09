@@ -30,7 +30,7 @@ jobs:
         run: docker ps -a
 
       - name: View Docker Compose Logs
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs --until=1m
 
       - name: Dump docker logs on failure using different shell
         if: failure()
