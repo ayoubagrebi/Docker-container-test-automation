@@ -1,11 +1,11 @@
-name: test Docker Compose deployment 
+name: test Docker Compose deployment
 
 on:
   push:
-    branches: [ main ]  
-  workflow_dispatch:  
-  schedule:           # Run daily at midnight 
-    - cron: '0 0 * * *'
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
 
 jobs:
   test:
@@ -15,27 +15,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-
-       
       - run: docker-compose --version
-      
+
       - name: Setup Docker Compose
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:
-          version: '2.14.2' 
+          version: '2.14.2'
 
       - name: Start Docker containers
-        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        run: docker-compose up -d
         working-directory: ${{ github.workspace }}
-       
+
       - name: Check running containers
         run: docker ps -a
-     
+
       - name: View Docker Compose Logs
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs -f
+        run: docker-compose logs
 
-        
-      
-      
-
-     
+      - name: Dump docker logs on failure using different shell
+        if: failure()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          shell: '/bin/sh'
