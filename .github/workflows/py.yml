@@ -53,11 +53,18 @@ jobs:
 
           # Check if container_status has any elements
           if container_status:
-            # Process container_status as usual
-            # ... (existing code)
+             print("Using regular expression for container status:")
+              for container in container_status:
+                  name, status = container
+                  print(f"  - Name: {name}, Status: {status}")
+                  report_file.write(f"{name}: {status}\n")
           else:
             print("Regular expression failed to match container status. Trying alternative parsing...")
+            lines = output.decode().splitlines()
+              headers = lines[0].split()  # Assuming first line contains headers
+              container_data = lines[1:]  # Assuming container data starts from line 2
 
+              print("Using alternative parsing for container status:")
           # Alternative parsing using split (modify based on actual output format)
           lines = output.decode().splitlines()
           headers = lines[0].split()  # Assuming first line contains headers
