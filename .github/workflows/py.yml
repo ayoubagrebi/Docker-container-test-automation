@@ -1,42 +1,42 @@
-name: test Docker Compose with python report  
+name: Test Docker Compose with python report
 
-on:                                           
-  push:                                         # Trigger on push event
-    branches: [main]                             # Only for pushes to main branch
-  workflow_dispatch:                             # Allow manual workflow run
-  schedule:                                     # Scheduled execution
-    - cron: '0 0 * * *'                           # Run daily at midnight
+on:
+  push:  # Trigger on push event
+    branches: [ main ]  # Only for pushes to main branch
+  workflow_dispatch:  # Allow manual workflow run
+  schedule:  # Scheduled execution
+    - cron: '0 0 * * *'  # Run daily at midnight
 
-jobs:                                           
-  test:                                           # Job name
-    runs-on: ubuntu-latest                       # Job runs on ubuntu-latest runner
+jobs:
+  test:  # Job name
+    runs-on: ubuntu-latest  # Job runs on ubuntu-latest runner
 
-    steps:                                         # Steps within the job
-      - name: Checkout code                         
-        uses: actions/checkout@v3                 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - run: docker-compose --version            
+      - run: docker-compose --version  # Check Docker Compose version
 
-      - name: Setup Docker Compose                
-        uses: KengoTODA/actions-setup-docker-compose@v1  
-        with:                                   
-          version: '2.14.2'                       
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.14.2'  # Specify Docker Compose version (if needed)
 
-      - name: Start Docker containers               # Step name
-        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d  
-        working-directory: ${{ github.workspace }}  
+      - name: Start Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        working-directory: ${{ github.workspace }}
 
-      - name: Check running containers             # Step name
-        run: docker ps -a                          
+      - name: Check running containers
+        run: docker ps -a
 
-      - name: Run Python script to generate status report  
-        run: |                                    
-          python - <<EOF                              # Start of multi-line string (indented under step)
+      - name: Run Python script to generate status report
+        run: |
+          python - <<EOF
           import subprocess
           import re
           import datetime
 
-          # Run docker-compose up command and capture output
+          # Run docker-compose ps command and capture output
           print("Running docker-compose ps command...")
           try:
               output = subprocess.check_output(["docker-compose", "-f", "./docker-compose/docker-compose.yaml", "ps"])
@@ -57,42 +57,40 @@ jobs:
               print(f"Error opening report file: {error}")
               exit(1)
 
+          # Attempt to parse container status using regular expression
           container_status = re.findall(r"(\w+)\s+(\w+)", output.decode())
 
           # Check if container_status has any elements
           if container_status:
-             print("Using regular expression for container status:")
+              print("Using regular expression for container status:")
               for container in container_status:
                   name, status = container
                   print(f"  - Name: {name}, Status: {status}")
                   report_file.write(f"{name}: {status}\n")
           else:
-            print("Regular expression failed to match container status. Trying alternative parsing...")
-            lines = output.decode().splitlines()
+              print("Regular expression failed to match container status. Trying alternative parsing...")
+
+              # Alternative parsing using split (modify based on actual output format)
+              lines = output.decode().splitlines()
               headers = lines[0].split()  # Assuming first line contains headers
               container_data = lines[1:]  # Assuming container data starts from line 2
 
               print("Using alternative parsing for container status:")
-          # Alternative parsing using split (modify based on actual output format)
-          lines = output.decode().splitlines()
-          headers = lines[0].split()  # Assuming first line contains headers
-          container_data = lines[1:]  # Assuming container data starts from line 2
-
-          for line in container_data:
-            data = line.split()
-            container_name = data[headers.index("NAME")]
-            container_status = data[headers.index("STATUS")]
-            print(f"{container_name}: {container_status}")
-            report_file.write(f"{container_name}: {container_status}\n")
+              for line in container_data:
+                  data = line.split()
+                  container_name = data[headers.index("NAME")]
+                  container_status = data[headers.index("STATUS")]
+                  print(f"{container_name}: {container_status}")
+                  report_file.write(f"{container_name}: {status}\n")
 
           # Close report file
           report_file.close()
 
           print("Container status report generated successfully.")
-          EOF                                         # End of multi-line string (indented under step)
+          EOF  # Ensure EOF is on a separate line, not indented
 
-      - name: Upload report as artifact         
-        uses: actions/upload-artifact@v3               
-        with:                                     
-          name: container_status_report            
-          path: container_report_*.txt              
+      - name: Upload report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: container_status_report
+          path: container_report_*.txt  # Upload all files matching the pattern
