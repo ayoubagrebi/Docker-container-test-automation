@@ -38,7 +38,11 @@ jobs:
 
           # Run docker-compose up command and capture output
           print("Running docker-compose ps command...")
-          output = subprocess.check_output(["docker-compose", "-f", "./docker-compose/docker-compose.yaml", "ps"])
+          try:
+              output = subprocess.check_output(["docker-compose", "-f", "./docker-compose/docker-compose.yaml", "ps"])
+          except subprocess.CalledProcessError as error:
+              print(f"Error running docker-compose ps: {error}")
+              exit(1)
           print("Output of docker-compose ps command:")
           print(output.decode())
 
@@ -47,7 +51,11 @@ jobs:
           formatted_date = now.strftime("%Y-%m-%d_%H-%M-%S")
 
           # Create report file with the current date and time in the filename
-          report_file = open(f"container_report_{formatted_date}.txt", "w")
+          try:
+              report_file = open(f"container_report_{formatted_date}.txt", "w")
+          except OSError as error:
+              print(f"Error opening report file: {error}")
+              exit(1)
 
           container_status = re.findall(r"(\w+)\s+(\w+)", output.decode())
 
