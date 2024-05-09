@@ -39,7 +39,8 @@ jobs:
           import datetime
 
             # Run docker-compose up command and capture output
-          output = subprocess.check_output(["docker-compose", "ps"])
+          output = subprocess.check_output(["docker-compose", "-f", "./docker-compose/docker-compose.yaml", "ps"])
+
 
           # Get current date and time
           now = datetime.datetime.now()
