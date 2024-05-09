@@ -50,7 +50,8 @@ jobs:
             report_file = open(f"container_report_{formatted_date}.txt", "w")
 
             # Search output for container status
-            container_status = re.findall(r"(\w+)\s+(?:.+?)\s+(\w+)", output.decode())
+            container_status = re.findall(r"(\w+)\s+(\w+)", output.decode())
+
             print("Container status:")
             print(container_status)
 
