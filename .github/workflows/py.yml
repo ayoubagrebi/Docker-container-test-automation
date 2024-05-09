@@ -91,4 +91,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: container_status_report
-          path: container_report_*.txt # Upload all files matching the pattern
+          path: container_report_*.txt # Upload
