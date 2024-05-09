@@ -1,0 +1,68 @@
+name: test Docker Compose with python report
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - run: docker-compose --version
+
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.14.2'
+
+      - name: Start Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        working-directory: ${{ github.workspace }}
+
+      - name: Check running containers
+        run: docker ps -a
+
+     
+
+      - name: Run Python script to generate status report
+        run: |
+          python - <<EOF
+          import subprocess
+          import re
+          import datetime
+
+            # Run docker-compose up command and capture output
+          output = subprocess.check_output(["docker-compose", "ps"])
+
+          # Get current date and time
+          now = datetime.datetime.now()
+          formatted_date = now.strftime("%Y-%m-%d_%H-%M-%S")
+
+          # Create report file with the current date and time in the filename
+          report_file = open(f"container_report_{formatted_date}.txt", "w")
+
+          # Search output for container status
+          container_status = re.findall(r"(\w+)\s+(\w+)\s+(?:\d+)\s+(?:\d+/\d+/\d+\s+)?(?:\d+:\d+:\d+\s+)?(\w+)", output.decode())
+
+          # Check status of each container and write to report file
+          for container, _, status in container_status:
+              report_file.write(f"{container}: {status}\n")
+
+          # Close report file
+          report_file.close()
+          
+
+          EOF
+
+      - name: Upload report as artifact 
+        uses: actions/upload-artifact@v3
+        with:
+          name: container_status_report 
+          path: container_report_*.txt  
