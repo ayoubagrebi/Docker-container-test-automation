@@ -31,7 +31,7 @@ jobs:
 
       - name: Run Python script to generate status report
         run: |
-          python - <<EOF
+         
           import subprocess
           import re
           import datetime
@@ -87,7 +87,7 @@ jobs:
           report_file.close()
 
           print("Container status report generated successfully.")
-          EOF  # Ensure EOF is on a separate line, not indented
+          
 
       - name: Upload report as artifact
         uses: actions/upload-artifact@v3
