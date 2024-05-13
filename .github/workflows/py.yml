@@ -17,7 +17,7 @@ jobs:
 
       - run: docker-compose --version # Check Docker Compose version
 
-      - name: Setup Docker Compose (Optional)
+      - name: Setup Docker Compose 
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:
           version: '2.14.2' # Specify Docker Compose version (if needed)
@@ -29,66 +29,6 @@ jobs:
       - name: Check running containers
         run: docker ps -a
 
-      - name: Run Python script to generate status report
-        run: |
-          import subprocess
-          import re
-          import datetime
-
-          # Run docker-compose ps command and capture output
-          print("Running docker-compose ps command...")
-          try:
-            output = subprocess.check_output(["docker-compose", "-f", "./docker-compose/docker-compose.yaml", "ps"])
-          except subprocess.CalledProcessError as error:
-            print(f"Error running docker-compose ps: {error}")
-            exit(1)
-          print("Output of docker-compose ps command:")
-          print(output.decode())
-
-          # Get current date and time
-          now = datetime.datetime.now()
-          formatted_date = now.strftime("%Y-%m-%d_%H-%M-%S")
-
-          # Create report file with the current date and time in the filename
-          try:
-            report_file = open(f"container_report_{formatted_date}.txt", "w")
-          except OSError as error:
-            print(f"Error opening report file: {error}")
-            exit(1)
-
-          # Attempt to parse container status using regular expression
-          container_status = re.findall(r"(\w+)\s+(\w+)", output.decode())
-
-          # Check if container_status has any elements
-          if container_status:
-            print("Using regular expression for container status:")
-            for container in container_status:
-              name, status = container
-              print(f"  - Name: {name}, Status: {status}")
-              report_file.write(f"{name}: {status}\n")
-          else:
-            print("Regular expression failed to match container status. Trying alternative parsing...")
-
-            # Alternative parsing using split (modify based on actual output format)
-            lines = output.decode().splitlines()
-            headers = lines[0].split()  # Assuming first line contains headers
-            container_data = lines[1:]  # Assuming container data starts from line 2
-
-            print("Using alternative parsing for container status:")
-            for line in container_data:
-              data = line.split()
-              container_name = data[headers.index("NAME")]
-              container_status = data[headers.index("STATUS")]
-              print(f"{container_name}: {container_status}")
-              report_file.write(f"{container_name}: {status}\n")
-
-          # Close report file
-          report_file.close()
-
-          print("Container status report generated successfully.")
-
-      - name: Upload report as artifact
-        uses: actions/upload-artifact@v3
-        with:
+      
           name: container_status_report
           path: container_report_*.txt # Upload
