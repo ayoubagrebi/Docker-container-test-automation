@@ -28,6 +28,7 @@ jobs:
 
       - name: Check running containers
         run: docker ps -a
-
+      - name: echo wallet-api
+        run: docker-compose exec wallet-api echo "wallet-api is up"
       
           
