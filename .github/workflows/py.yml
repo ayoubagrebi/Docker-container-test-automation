@@ -1,4 +1,4 @@
-name: Test Docker Compose with python report
+name: Test Docker Compose up
 
 on:
   push: # Trigger on push event
@@ -30,5 +30,4 @@ jobs:
         run: docker ps -a
 
       
-          name: container_status_report
-          path: container_report_*.txt # Upload
+          
