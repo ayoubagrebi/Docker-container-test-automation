@@ -1,0 +1,37 @@
+name: Measure performance
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron:  '0 2 * * 1-5'
+env:
+  COMPOSE_PROJECT_NAME: gha_${{ github.run_number }}
+  DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+
+jobs:
+  measure:
+    runs-on: [ self-hosted, 4xlarge-on-demand, dedicated-storage ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start measuring
+        run: | 
+          docker compose -f ./compose-measure-performance.yml up monitor-performance > task.logs &
+
+      - name: Wait for monitoring to start
+        run: ./ci/wait-for-service.sh monitor-performance compose-measure-performance.yml
+
+      - name: Start everything
+        uses: myorg/our-compose-infrastructure-project@v4
+        with:
+          wait-before-exiting: 180 # Max amount of time to wait for containers uptime before considering it a failure
+          all-services-except: datadog-agent,selenium,reverse-proxy,portainer # A list of docker compose services we don't need/want to measure that we can ignore
+
+      - name: Append task logs
+        if: ${{ always() }}
+        run: |
+          echo '## Performance task log output' >> $GITHUB_STEP_SUMMARY 
+          echo '<pre>' >> $GITHUB_STEP_SUMMARY 
+          cat task.logs >> $GITHUB_STEP_SUMMARY
+          echo '</pre>' >> $GITHUB_STEP_SUMMARY 
