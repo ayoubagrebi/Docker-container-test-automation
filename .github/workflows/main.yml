@@ -28,6 +28,5 @@ jobs:
         run: docker ps -a
 
       - name: View Docker Compose Logs issuer-api
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs docker-compose-issuer-api-1
-
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs issuer-api
      
