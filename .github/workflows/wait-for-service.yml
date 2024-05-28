@@ -1,6 +1,10 @@
+name: docker
 
-name: Docker 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -9,17 +13,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-
-       
       - run: docker-compose --version
-      
+
       - name: Setup Docker Compose
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:
-          version: '2.14.2' 
+          version: '2.14.2'
 
-      - name: Start Docker Compose services
+      - name: Start Docker containers
         run:  docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        working-directory: ${{ github.workspace }}
+
+      - name: Check running containers
+        run: docker ps -a
+
+      - name: View Docker Compose Logs issuer-api
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs issuer-api
 
       - name: Wait for services to start
         run: ./docker-compose/check_service.sh ./docker-compose/docker-compose.yaml
@@ -27,4 +36,4 @@ jobs:
       - name: Start everything
         uses: myorg/our-compose-infrastructure-project@v4
         with:
-          wait-before-exiting: 180 # Max amount of time to wait for containers uptime before considering it a failure
+          wait-before-exiting: 180 
