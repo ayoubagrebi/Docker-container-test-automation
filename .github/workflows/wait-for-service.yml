@@ -1,4 +1,4 @@
-name: Measure performance
+name: Measure performance1
 on:
   push:
     branches:
