@@ -1,0 +1,58 @@
+name: Docker Compose Test000
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+
+       
+      - run: docker-compose --version
+      
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.14.2' 
+
+      - name: Start Docker containers
+        run: docker-compose -f ./docker-compose/docker-compose.yaml up -d
+        working-directory: ${{ github.workspace }}
+
+       
+      - name: Check running containers
+        run: docker ps -a
+      - name: View Docker Compose Logs
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs && sleep 60
+
+                
+
+      - name: Check Docker Compose Logs for Errors
+        
+        run: docker-compose -f ./docker-compose/docker-compose.yaml logs | grep -qv 'error'
+        shell: bash
+        continue-on-error: false
+      - name: Health check wallet-api
+        run: docker-compose -f ./docker-compose/docker-compose.yaml exec -T wallet-api sh -c "curl -f http://localhost:8080/health || exit 1"
+      
+  #    - name: Docker Health Check Verifier
+   #     uses: stringbean/docker-healthcheck-action@v3.0.0
+    #    with:
+     #     container: docker-compose-verifier-api-1
+      #    wait-time: 50
+       #   require-status: running
+        #  require-healthy: true  
+
+     # - run: docker inspect -f '{{ .Mounts }}' $(docker ps -aqf "name=docker-compose-wallet-api-1")
+
+      #- name: Docker Health Check Issuer
+       # uses: stringbean/docker-healthcheck-action@v3.0.0
+        #with:
+         # container: docker-compose-issuer-api-1
+          #wait-time: 50
+         # require-status: running
+         # require-healthy: true  
+
+     
