@@ -1,14 +1,15 @@
 name: Measure performance1
+
 on:
   push:
-    branches:
-      - main
-  schedule:
-    - cron:  '0 2 * * 1-5'
-
+    branches: [main]
+  workflow_dispatch:
+  
 jobs:
-  measure:
+  test:
     runs-on: ubuntu-latest
+
+
     steps:
       - uses: actions/checkout@v4
 
