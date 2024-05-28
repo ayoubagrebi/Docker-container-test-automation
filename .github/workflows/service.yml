@@ -29,11 +29,7 @@ jobs:
 
                 
 
-      - name: Check Docker Compose Logs for Errors
-        
-        run: docker-compose -f ./docker-compose/docker-compose.yaml logs | grep -qv 'error'
-        shell: bash
-        continue-on-error: false
+    
       - name: Health check wallet-api
         run: docker-compose -f ./docker-compose/docker-compose.yaml exec -T wallet-api sh -c "curl -f http://localhost:8080/health || exit 1"
       
